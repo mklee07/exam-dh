@@ -5,35 +5,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import axios from 'axios';
 
 
-
 const Home = () => {
-    axios.get('https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year')
-   const [users, setUsers] = useState();
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState(null);
- 
-   const fetchUsers = async () => {
-     try {
-       // 요청이 시작 할 때에는 error 와 users 를 초기화하고
-       setError(null);
-       setUsers(null);
-       // loading 상태를 true 로 바꿉니다.
-       setLoading(true);
-       const response = await axios.get(
-         'https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year'
-       );
-       setUsers(response.data); // 데이터는 response.data 안에 들어있습니다.
-     } catch (e) {
-       setError(e);
-     }
-     setLoading(false);
-   };
-   useEffect(()=>{
-    fetchUsers();
-    console.log(users)
-   },[])
-
-
    const [rowData,setRowData] = useState([])
    // var dataState = useState([])
    // var rowData = dataState[0]
@@ -41,7 +13,7 @@ const Home = () => {
    // setRowData가 밑의 json data의 movies에서 데이터 값을 가져옴.
   const [columnDefs] = useState([
        { field: 'rating' },
-       { field: 'id' },
+       { field: 'year' },
        { field: 'title' }
   ])
     //자주 사용됨을써 usecallback을 사용해 최적화함.
@@ -54,7 +26,14 @@ const Home = () => {
     // 버튼이 클릭 될 때마다 useCallback이 작동하여 함수를 재사용함.
     // window.location.href는 페이지 이동
 
-
+    useEffect(()=>{
+    axios.get('http://192.168.180.14:3000/movie/getMovies')
+    .then((res) => res)
+    .then((res) =>{
+      setRowData(res.data)
+      console.log(res.data)
+    });
+  },[]);
     
    return (
        <div className="ag-theme-alpine" style={{height: 800, width: 800}}>
@@ -72,3 +51,7 @@ const Home = () => {
 };
 
 export default Home;
+
+
+//https://yts.mx/api/v2/movie_details.json?movie_id=37384
+//http://192.168.180.14:3000/movie/getMovies

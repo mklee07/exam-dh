@@ -10,6 +10,7 @@
     "ag-grid-community": "^28.0.2",
     "ag-grid-react": "^28.0.0",
     "axios": "^0.27.2",
+    "eslint-config-react-app": "^7.0.1",
     "gh-pages": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,7 +28,6 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
       "react-app/jest"
     ]
   },
@@ -42,5 +42,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^8.21.0",
+    "eslint-plugin-react": "^7.30.1"
   }
 }
