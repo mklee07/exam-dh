@@ -36,6 +36,7 @@ BaseUrl = http://192.168.180.14:3000/movie
   small_cover_image : String,
   medium_cover_image : String,
   large_cover_image : String,
+  description_full : String,
   state : String,
   date_uploaded : String,
   date_uploaded_unix : Integer
@@ -49,7 +50,8 @@ BaseUrl = http://192.168.180.14:3000/movie
   medium_cover_image : String,
   year : Integer,
   rating : Integer,
-  runtime : Integer
+  runtime : Integer,
+  description_full : String,
   }
 
 5. 목록삭제
