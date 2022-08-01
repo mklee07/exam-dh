@@ -14,7 +14,7 @@ BaseUrl = http://192.168.180.14:3000/movie
 3.  목록추가
 
 - POST /setMovie
-- Body { id : Integer , \* 필수
+- Body {
   url : String,
   imdb_code : String,
   title : String,
