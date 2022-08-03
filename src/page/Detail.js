@@ -19,7 +19,6 @@ function Detail() {
     return false;
   };
 
-  //데이터 값이 {}으로 덮혀있어 usestate에도 usestate({})으로 덮었지만 object가 나와 yt_trailer_code 값을 못읽어 따로 yt를 만들었음, usestate()로 고치니 해결됨
   useEffect(() => {
     axios(`http://192.168.180.14:3000/movie/getDetail?id=${id}`)
       .then((res) => res.data)
@@ -62,8 +61,7 @@ function Detail() {
               {movie.title}
               {/* bootstrap에서 class를 지정하여 버튼을 사용함.  */}
               <Button
-                type="button"
-                class="btn btn-outline-primary"
+                variant="outline-secondary"
                 onClick={onClickedHome}
                 style={{ float: "right", paddingBottom: "10px" }}
               >
