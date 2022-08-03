@@ -4,12 +4,18 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Detail.css";
 import { Button } from "react-bootstrap";
+
 //https://getbootstrap.com/docs/5.2/components/buttons/
 //bootstrap에서 버튼을 가져와 사용했음.
 
 function Detail() {
   const { id } = useParams();
   const [movie, setMovie] = useState([]);
+  //text-area를 사용하기 위해 만듬.
+  const [textValue, setTextValue] = useState("");
+  const handleSetValue = (e) => {
+    setTextValue(e.target.value);
+  };
 
   //값이 "", null , undefined 일 경우 원치않는 에러를 불러올 수 있기에 이들을 감지하는 isEmpty를 선언하여 사용함. (onclickJpg, genre에서 사용중.)
   const isEmpty = (str) => {
@@ -25,6 +31,7 @@ function Detail() {
       .then((res) => {
         setMovie(res);
         console.log(res.genres);
+        console.log(movie.description_full);
       });
   }, []);
 
@@ -43,6 +50,24 @@ function Detail() {
     window.location.href = `/`;
   }, []);
 
+  //수정
+  const Update = async (e) => {
+    e.preventDefault();
+    const res = await axios("/axios/add", {
+      method: "POST",
+      data: { data: id },
+      header: new Headers(),
+    });
+    if (res.data) {
+      alert("added Data");
+      return window.location.reload();
+    }
+  };
+
+  const Save = async (e) => {};
+
+  const Delete = async (e) => {};
+
   return (
     <div>
       <div style={{ height: "100%", width: "90%", float: "right" }}>
@@ -51,23 +76,44 @@ function Detail() {
           style={{ justifyContent: "right", width: "90%", alignItems: "" }}
         >
           <div className="header" style={{ width: "100%" }}>
-            <h2
+            <input
               id="title"
               className="Home"
               style={{ paddingTop: "20px" }}
               data-text-context="true"
               align="left"
+              value={movie.title}
+            ></input>
+            <Button
+              hidden=""
+              variant="outline-danger"
+              onClick={Update}
+              style={{ float: "right", paddingBottom: "10px" }}
             >
-              {movie.title}
-              {/* bootstrap에서 class를 지정하여 버튼을 사용함.  */}
-              <Button
-                variant="outline-secondary"
-                onClick={onClickedHome}
-                style={{ float: "right", paddingBottom: "10px" }}
-              >
-                Home
-              </Button>
-            </h2>
+              삭제
+            </Button>
+            <Button
+              variant="outline-warning"
+              onClick={Update}
+              style={{ float: "right", paddingBottom: "10px" }}
+            >
+              수정
+            </Button>
+            <Button
+              hidden=""
+              variant="outline-success"
+              onClick={Save}
+              style={{ float: "right", paddingBottom: "10px" }}
+            >
+              저장
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={onClickedHome}
+              style={{ float: "right", paddingBottom: "10px" }}
+            >
+              Home
+            </Button>
           </div>
 
           <table
@@ -98,33 +144,41 @@ function Detail() {
                 style={{ whiteSpace: "pre-line" }}
               >
                 <td className="SecondCell">
-                  <b> &nbsp;{movie.year}</b>
+                  <input id="SecondCell" value={movie.year}></input>
+
                   {/* &nbsp;는 빈칸을 나타남 */}
                 </td>
                 <td className="SecondCell">
-                  <b> &nbsp;{movie.rating}</b>
+                  <input id="SecondCell" value={movie.rating}></input>
                 </td>
                 <td className="SecondCell">
-                  <b> &nbsp;{movie.runtime}분</b>
+                  <input
+                    id="SecondCell"
+                    value={!isEmpty(movie.runtime) && movie.runtime + "분"}
+                  ></input>
                 </td>
                 <td className="SecondCell">
-                  <b>
-                    {!isEmpty(movie.genres) &&
-                      movie.genres.replaceAll("{", "").replaceAll("}", "")}
+                  <input
+                    id="SecondCell"
+                    value={movie.genres}
+                    style={{ width: "400px" }}
+                  >
+                    {/* {!isEmpty(movie.genres) &&
+                      movie.genres.replaceAll("{", "").replaceAll("}", "")} */}
                     {/* genre만 하니 랜더링 할때마다 replaceAll 프로퍼티를 못읽다라는 에러가 나왔었음. &&조건문을 활용하니 해결됨. isEmpty를 사용해 "",undefined,null을 검사함 */}
                     {/* replaceAll :  변경하고 싶은 문자열.replaceAll("변경이 될 문자" , "변경하고 싶은 문자") 처럼 사용하면 됨.   */}
-                  </b>
+                  </input>
                 </td>
               </tr>
             </tbody>
           </table>
           {/* 위는 테이블 형식이라 테이블 안에 넣을시 개봉 연도 너비와 같은 너비로 사용이 된다. */}
           <tfoot width="100%">
-            <tr width="40%">
+            <tr>
               <td
                 className="FirstCell"
                 bgcolor="#0090ff"
-                style={{ color: "white", width: "40%" }}
+                style={{ color: "white" }}
                 align="center"
               >
                 <b>포스트</b>
@@ -150,7 +204,11 @@ function Detail() {
                 </h6>
               </td>
               <td bgcolor="#f0f4f6">
-                <b> - {movie.description_full}</b>
+                <textarea
+                  style={{ width: "450px", height: "400px" }}
+                  value={movie.description_full}
+                  onChange={(e) => handleSetValue(e)}
+                ></textarea>
               </td>
             </tr>
           </tfoot>
@@ -170,3 +228,16 @@ export default Detail;
 }
 
 // replaceall : <b>{genre.replaceAll("{", "").replaceAll("}", "")}</b>
+
+{
+  /* <b>
+{!isEmpty(movie.description_full) &&
+  Object.keys(movie.description_full).map(
+    (description_full, idx) => {
+      let key = description_full;
+      let value = movie.description_full[key];
+      return `${key}=${value}`;
+    }
+  )}
+</b> */
+}

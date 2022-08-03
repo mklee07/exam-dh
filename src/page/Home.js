@@ -12,7 +12,7 @@ const Home = () => {
   const [columnDefs] = useState([
     { field: "rating", resizable: true }, //ag-grid에서는 행에 필요한 속성들을 직접 행에 넣어 작동할 수 있도록함.resizeable은 옆의 선을 두어 크기를 맘대로 조절 가능
     { field: "year", resizable: true },
-    { field: "title", resizable: true },
+    { field: "title_english", resizable: true, headerName: "Title" },
     { field: "genres", resizable: true },
     { field: "runtime", resizable: true },
   ]);
@@ -20,6 +20,10 @@ const Home = () => {
   const cellClickedListener = useCallback((e) => {
     window.location.href = "/" + "movie" + "/" + e.data.id;
   }, []);
+
+  const onClickNewData = (e) => {
+    window.location.href = "/" + "movie" + "/" + 0;
+  };
 
   // 하는일 : 열에 있는 셀의 크기에 따라 열의 크기를 재조정해주는 함수
   // 자주 사용함으로 usecallback(함수를 재사용함)를 사용함
@@ -44,10 +48,12 @@ const Home = () => {
       .then((res) => {
         setRowData(res);
         console.log(res);
+        sizeToFit();
       });
   }, []);
 
   // 하는일 : 행에 있는 data 값의 크게에 따라 열의 크기를 조절하는 함수
+  // 아까워서 못지우겠음.
   const autoSizeAll = useCallback((skipHeader) => {
     const allColumnIds = []; //columnIds을 배열로 만듬
 
@@ -94,27 +100,8 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 890, width: 1720 }}>
+    <div className="ag-theme-alpine" style={{ height: 800, width: 1900 }}>
       <div className="header">
-        {/* bootstrap에서 Button컴포넌트를 가져와 class에 값을 넣어 필요한 버튼을 가져옴 */}
-        <div style={{ textAlign: "left" }}>
-          <Button
-            style={{ float: "left" }}
-            type="button"
-            variant="outline-primary"
-            onClick={() => autoSizeAll(false)}
-          >
-            자동 정렬
-          </Button>
-          <Button
-            style={{ float: "left" }}
-            type="button"
-            variant="outline-primary"
-            onClick={sizeToFit}
-          >
-            셀 크기에 맞게 정렬
-          </Button>
-        </div>
         <h3
           onClick={onClickedHome}
           style={{
@@ -128,9 +115,10 @@ const Home = () => {
         </h3>
 
         <div style={{ textAlign: "right" }}>
-          <div style={{ width: "30%" }}>
+          <div>
             <input
-              style={{ width: "40%" }}
+              id="filter-text-box"
+              style={{ textAlign: "right" }}
               type="text"
               class="form-control"
               onInput={onFilterTextBoxChanged}
@@ -141,10 +129,16 @@ const Home = () => {
             variant="outline-secondary"
             style={{}}
             type="button"
-            onClick={onPrintQuickFilterTexts}
+            onClick={onClickNewData}
           >
-            콘솔로그에 데이터 값 남기기
+            신규
           </Button>
+          <Button
+            variant="outline-secondary"
+            style={{}}
+            type="button"
+            onClick={onPrintQuickFilterTexts}
+          ></Button>
         </div>
       </div>
 
