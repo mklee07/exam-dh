@@ -1,9 +1,10 @@
 import react, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Detail.css";
 import { Button } from "react-bootstrap";
+import qs from "qs";
 
 //https://getbootstrap.com/docs/5.2/components/buttons/
 //bootstrap에서 버튼을 가져와 사용했음.
@@ -11,12 +12,16 @@ import { Button } from "react-bootstrap";
 function Detail() {
   const { id } = useParams();
   const [movie, setMovie] = useState([]);
-  //text-area를 사용하기 위해 만듬.
-  const [textValue, setTextValue] = useState("");
-  const handleSetValue = (e) => {
-    setTextValue(e.target.value);
+  const [title, setTitle] = useState();
+  const [year, setYear] = useState();
+  const [rating, setRating] = useState();
+  const [runtime, setRuntime] = useState();
+  const [genres, setGenres] = useState();
+  //사용 이유 : textarea value값 수정하기 위해
+  const [description, setDescription] = useState();
+  const onChangeDescription = (e) => {
+    setDescription(e.target.value);
   };
-
   //값이 "", null , undefined 일 경우 원치않는 에러를 불러올 수 있기에 이들을 감지하는 isEmpty를 선언하여 사용함. (onclickJpg, genre에서 사용중.)
   const isEmpty = (str) => {
     if (str === "") return true;
@@ -29,9 +34,14 @@ function Detail() {
     axios(`http://192.168.180.14:3000/movie/getDetail?id=${id}`)
       .then((res) => res.data)
       .then((res) => {
+        setDescription(res.description_full);
+        setTitle(res.title);
+        setYear(res.year);
+        setRating(res.rating);
+        setGenres(res.genres);
+        setRuntime(res.runtime);
         setMovie(res);
         console.log(res.genres);
-        console.log(movie.description_full);
       });
   }, []);
 
@@ -50,23 +60,86 @@ function Detail() {
     window.location.href = `/`;
   }, []);
 
-  //수정
-  const Update = async (e) => {
-    e.preventDefault();
-    const res = await axios("/axios/add", {
-      method: "POST",
-      data: { data: id },
-      header: new Headers(),
+  //수정 http://192.168.180.14:3000/movie/updateMovie
+  const Update = () => {
+    const req = qs.stringify({
+      id: id,
+      title: title,
+      year: year,
+      rating: rating,
+      genres: genres,
+      description_full: description,
     });
-    if (res.data) {
-      alert("added Data");
-      return window.location.reload();
-    }
+    console.log(req);
+    const headers = {
+      "content-type": "application/x-www-form-urlencoded",
+    };
+    axios
+      .put("http://192.168.180.14:3000/movie/updateMovie", req, { headers })
+      .then((res) => {
+        alert("수정되었습니다", res);
+      })
+      .catch(function (res) {
+        alert("요청이 에러로 인해 취소 되었습니다");
+      });
   };
 
-  const Save = async (e) => {};
+  // app.put("http://192.168.180.14:3000/movie/updateMovie", (req, res) => {
+  //   const { id, title } = req.body;
+  //   const movie = movie.map((movie) => {
+  //     if (movie.id == id) movie.title = title;
+  //     return {
+  //       id: movie.id,
+  //       title: movie.title,
+  //     };
+  //   });
+  //   res.json({ ok: true, movie: movie });
+  // });
 
-  const Delete = async (e) => {};
+  const Save = () => {
+    const req = qs.stringify({
+      title: title,
+      year: year,
+      rating: rating,
+      runtime: runtime,
+      genres: genres,
+      description_full: description,
+    });
+    console.log(req);
+    const headers = {
+      "content-type": "application/x-www-form-urlencoded",
+    };
+    axios
+      .post("http://192.168.180.14:3000/movie/setMovie", req, { headers })
+      .then((res) => {
+        alert("저장되었습니다", res);
+      })
+      .catch(function (res) {
+        alert("요청이 에러로 인해 취소 되었습니다");
+      });
+  };
+
+  //Delete에서의 body는 header와 함께 보내야함.(매우 중요!)
+  const Delete = () => {
+    const req = qs.stringify({
+      id: id,
+    });
+    console.log(req);
+    const headers = {
+      "content-type": "application/x-www-form-urlencoded",
+    };
+    axios
+      .delete("http://192.168.180.14:3000/movie/delMovie", {
+        headers,
+        data: req,
+      })
+      .then(function (response) {
+        alert("수정되었습니다");
+      })
+      .catch(function (res) {
+        alert("요청이 에러로 인해 취소 되었습니다");
+      });
+  };
 
   return (
     <div>
@@ -76,18 +149,25 @@ function Detail() {
           style={{ justifyContent: "right", width: "90%", alignItems: "" }}
         >
           <div className="header" style={{ width: "100%" }}>
+            {/* 리액트에서의 input은 기본적으로 read only 속성을 가지고 있어 value값을 변경못함. */}
             <input
               id="title"
               className="Home"
               style={{ paddingTop: "20px" }}
               data-text-context="true"
               align="left"
-              value={movie.title}
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                //console.log(title);
+              }}
+              readOnly={false}
             ></input>
             <Button
+              id="test-id"
               hidden=""
               variant="outline-danger"
-              onClick={Update}
+              onClick={Delete}
               style={{ float: "right", paddingBottom: "10px" }}
             >
               삭제
@@ -144,23 +224,41 @@ function Detail() {
                 style={{ whiteSpace: "pre-line" }}
               >
                 <td className="SecondCell">
-                  <input id="SecondCell" value={movie.year}></input>
+                  <input
+                    id="SecondCell"
+                    value={year}
+                    onChange={(e) => {
+                      setYear(e.target.value);
+                    }}
+                  ></input>
 
                   {/* &nbsp;는 빈칸을 나타남 */}
                 </td>
                 <td className="SecondCell">
-                  <input id="SecondCell" value={movie.rating}></input>
-                </td>
-                <td className="SecondCell">
                   <input
                     id="SecondCell"
-                    value={!isEmpty(movie.runtime) && movie.runtime + "분"}
+                    value={rating}
+                    onChange={(e) => {
+                      setRating(e.target.value);
+                    }}
                   ></input>
                 </td>
                 <td className="SecondCell">
                   <input
                     id="SecondCell"
-                    value={movie.genres}
+                    value={runtime}
+                    onChange={(e) => {
+                      setRuntime(e.target.value);
+                    }}
+                  ></input>
+                </td>
+                <td className="SecondCell">
+                  <input
+                    id="SecondCell"
+                    value={genres}
+                    onChange={(e) => {
+                      setGenres(e.target.value);
+                    }}
                     style={{ width: "400px" }}
                   >
                     {/* {!isEmpty(movie.genres) &&
@@ -206,8 +304,10 @@ function Detail() {
               <td bgcolor="#f0f4f6">
                 <textarea
                   style={{ width: "450px", height: "400px" }}
-                  value={movie.description_full}
-                  onChange={(e) => handleSetValue(e)}
+                  value={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                  }}
                 ></textarea>
               </td>
             </tr>

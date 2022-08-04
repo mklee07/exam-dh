@@ -57,4 +57,4 @@ BaseUrl = http://192.168.180.14:3000/movie
 5. 목록삭제
 
 - DELETE /delMovie
-- Body { id: String \* 필수 }
+- Body { id: Integer \* 필수 }
