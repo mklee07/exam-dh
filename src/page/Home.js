@@ -9,24 +9,89 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import axios from "axios";
+import { render } from "react-dom";
 import { Button } from "react-bootstrap";
 import "./Home.css";
+//GRAPH
+import { ModuleRegistry } from "@ag-grid-community/core";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { MenuModule } from "@ag-grid-enterprise/menu";
+import { GridChartsModule } from "@ag-grid-enterprise/charts";
+import { RowGroupingModule } from "@ag-grid-enterprise/row-grouping";
+//GRAPH
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  MenuModule,
+  GridChartsModule,
+  RowGroupingModule,
+]);
 
 const Home = () => {
   const gridRef = useRef(); // sizeToFit에 이용됨 , useRef는 .current를 통해 useRef에 저장된 값에 접근할 수 있음.
+  const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const [rowData, setRowData] = useState();
-  //      editable: true, valueParser: numberValueParser 에 대해 알아야함.
   const [columnDefs] = useState([
-    { field: "rating", resizable: true },
-    { field: "year", resizable: true },
+    { field: "rating", resizable: true, chartDataType: "category" },
+    { field: "year", resizable: true, chartDataType: "excluded" },
     {
       field: "title_english",
       resizable: true,
       headerName: "title",
     },
     { field: "genres", resizable: true },
-    { field: "runtime", resizable: true },
+    { field: "runtime", resizable: true, chartDataType: "series" },
   ]);
+  //GRAPH
+  const defaultColDef = useMemo(() => {
+    return {
+      editable: true,
+      sortable: true,
+      flex: 1,
+      minWidth: 100,
+      filter: true,
+      resizable: true,
+    };
+  }, []);
+  //GRAPH
+  const popupParent = useMemo(() => {
+    return document.body;
+  }, []);
+  const chartThemeOverrides = useMemo(() => {
+    return {
+      common: {
+        title: {
+          enabled: true,
+          text: "Medals by Age",
+        },
+        legend: {
+          position: "bottom",
+        },
+      },
+      column: {
+        axes: {
+          category: {
+            label: {
+              rotation: 0,
+            },
+          },
+        },
+      },
+    };
+  }, []);
+  //GRAPH
+  const onFirstDataRendered = useCallback((params) => {
+    var createRangeChartParams = {
+      cellRange: {
+        rowStartIndex: 0,
+        rowEndIndex: 79,
+        columns: ["age", "gold", "silver", "bronze"],
+      },
+      chartType: "groupedColumn",
+      chartContainer: document.querySelector("#myChart"),
+      aggFunc: "sum",
+    };
+    gridRef.current.api.createRangeChart(createRangeChartParams);
+  }, []);
 
   const onClickNewData = (e) => {
     window.location.href = "/" + "movie" + "/" + 0;
@@ -80,7 +145,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 500, width: 1900 }}>
+    <div className="ag-theme-alpine" style={{ height: 800, width: 1900 }}>
       <div className="header">
         <h3
           onClick={onClickedHome}
@@ -123,19 +188,24 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="Body">
+      <div className="ag-theme-alpine" style={{ height: 500, width: 1920 }}>
         <AgGridReact
           ref={gridRef}
           rowData={rowData}
           columnDefs={columnDefs}
-          animateRows={true}
           rowSelection="multiple"
           onCellDoubleClicked={cellClickedListener} //onCellClicked -> onCellDoubleClicked으로 바꿈
           enableCellTextSelection={true} //  사용시 아래의 ensureDomOrder을 같이 활용하는게 좋다고 본문에 설명이있음.
           ensureDomOrder={true} //본적으로 행과 열은 DOM에서 순서 없이 나타날 수 있고 '잘못된 순서'는 화면 판독기에서 구문 분석할 때 일관되지 않은 결과를 초래할 수 있음. 이를 방지하고자 행 및 열 순서를 강제 실행함.
           cacheQuickFilter={true}
+          //추가된 내용
+          defaultColDef={defaultColDef}
+          popupParent={popupParent}
+          chartThemeOverrides={chartThemeOverrides}
+          onFirstDataRendered={onFirstDataRendered}
         />
       </div>
+      <div className="ag-theme-alpine my-chart"></div>
     </div>
   );
 };

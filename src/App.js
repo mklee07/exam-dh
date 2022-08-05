@@ -10,7 +10,7 @@ function App() {
         <Routes>
           <Route path="/movie/:id" element={<Detail />} />
           <Route path="/" element={<Home />} />
-          <Route path="/movie/:id/graph" element={<runTimeGraph />} />
+          {/* <Route path="/movie/:id/graph" element={<runTimeGraph />} /> */}
         </Routes>
       </BrowserRouter>
     </div>
