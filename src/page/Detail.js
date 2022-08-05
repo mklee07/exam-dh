@@ -17,6 +17,9 @@ function Detail() {
   const [rating, setRating] = useState();
   const [runtime, setRuntime] = useState();
   const [genres, setGenres] = useState();
+  //hidden id= 0활용
+  let [hidden, setHidden] = useState(true);
+
   //사용 이유 : textarea value값 수정하기 위해
   const [description, setDescription] = useState();
   const onChangeDescription = (e) => {
@@ -41,7 +44,8 @@ function Detail() {
         setGenres(res.genres);
         setRuntime(res.runtime);
         setMovie(res);
-        console.log(res.genres);
+        console.log(id);
+        console.log(hidden);
       });
   }, []);
 
@@ -163,9 +167,10 @@ function Detail() {
               }}
               readOnly={false}
             ></input>
+            <button onClick={console.log("111")}>콘솔 확인</button>
             <Button
               id="test-id"
-              hidden=""
+              hidden={id < 1 && hidden}
               variant="outline-danger"
               onClick={Delete}
               style={{ float: "right", paddingBottom: "10px" }}
@@ -173,6 +178,7 @@ function Detail() {
               삭제
             </Button>
             <Button
+              hidden={id < 1 && hidden}
               variant="outline-warning"
               onClick={Update}
               style={{ float: "right", paddingBottom: "10px" }}
@@ -180,7 +186,7 @@ function Detail() {
               수정
             </Button>
             <Button
-              hidden=""
+              hidden={id > 0 && hidden}
               variant="outline-success"
               onClick={Save}
               style={{ float: "right", paddingBottom: "10px" }}

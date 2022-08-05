@@ -1,6 +1,7 @@
 API 목록
 
 BaseUrl = http://192.168.180.14:3000/movie
+APP.JSON =
 
 1. 목록조회
 
@@ -58,3 +59,42 @@ BaseUrl = http://192.168.180.14:3000/movie
 
 - DELETE /delMovie
 - Body { id: Integer \* 필수 }
+
+  const req = qs.stringify({
+  id: id,
+  title: title,
+  year: year,
+  rating: rating,
+  genres: genres,
+  description_full: description,
+  });
+  console.log(req);
+  const headers = {
+  "content-type": "application/x-www-form-urlencoded",
+  };
+  axios
+  .put("http://192.168.180.14:3000/movie/updateMovie", req, { headers })
+  .then((res) => {
+  alert("수정되었습니다", res);
+  })
+  .catch(function (res) {
+  alert("요청이 에러로 인해 취소 되었습니다");
+  });
+
+          const req = qs.stringify({
+      id: id,
+
+  });
+  const headers = {
+  "content-type": "application/x-www-form-urlencoded",
+  };
+  axios
+  .delete("http://192.168.180.14:3000/movie/delMovie", { headers }, req)
+  .then(function (res) {
+  alert("수정되었습니다");
+  console.log(Update);
+  })
+  .catch((res) => {
+  alert("error");
+  });
+  console.log(`id: ${id}`);
