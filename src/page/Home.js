@@ -34,9 +34,15 @@ const Home = () => {
     { field: "rating", resizable: true, chartDataType: "category" },
     { field: "year", resizable: true, chartDataType: "excluded" },
     {
-      field: "title_english",
+      field: "title",
       resizable: true,
       headerName: "title",
+      cellStyle: {
+        textOverflow: "ellipsis", //  ...을 만듬
+        whiteSpace: "nowrap", //아랫줄로 내려가는 것을 막음
+        overflow: "hidden", // 영역 감추기
+        padding: 0,
+      },
     },
     { field: "genres", resizable: true },
     { field: "runtime", resizable: true, chartDataType: "series" },
@@ -96,6 +102,12 @@ const Home = () => {
   const onClickNewData = (e) => {
     window.location.href = "/" + "movie" + "/" + 0;
   };
+  const onClickGraphpage = (e) => {
+    window.location.href = "/" + "graph" + "/" + "getMovieGraph";
+  };
+  const cellClickedListener = useCallback((e) => {
+    window.location.href = "/" + "movie" + "/" + e.data.id;
+  }, []);
 
   // 하는일 : 열에 있는 셀의 크기에 따라 열의 크기를 재조정해주는 함수
   // 자주 사용함으로 usecallback(함수를 재사용함)를 사용함
@@ -128,9 +140,6 @@ const Home = () => {
     gridRef.current.api.setQuickFilter(
       document.getElementById("filter-text-box").value
     );
-  }, []);
-  const cellClickedListener = useCallback((e) => {
-    window.location.href = "/" + "movie" + "/" + e.data.id;
   }, []);
 
   const onPrintQuickFilterTexts = useCallback(() => {
@@ -170,7 +179,14 @@ const Home = () => {
               placeholder="내용을 적으면 자동으로 검색이 됩니다."
             />
           </div>
-
+          <Button
+            variant="outline-secondary"
+            style={{}}
+            type="button"
+            onClick={onClickGraphpage}
+          >
+            그래프
+          </Button>
           <Button
             variant="outline-secondary"
             style={{}}

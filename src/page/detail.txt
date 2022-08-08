@@ -1,0 +1,13 @@
+ //input에 숫자, 특수기호.
+  const isNumber = (value) => {
+    const regExp = /[a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+    return regExp.test(value);
+  };
+  const isString = (value) => {
+    const strExp = /[^a-zA-Z]/g;
+    return strExp.test(value);
+  };
+
+    function onlyAlphabet(ele) {
+    ele.value = ele.value.replace(/[^\\!-z]/gi, "");
+  }

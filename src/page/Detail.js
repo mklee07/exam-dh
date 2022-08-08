@@ -33,6 +33,31 @@ function Detail() {
     return false;
   };
 
+  //confirm을 사용할때 확인을 눌럿을때, 취소를 눌렀을 때 받도록 함
+  const useConfirm = (message = null, onConfirm, onCancle) => {
+    if (!onConfirm || typeof onConfirm !== "function") {
+      return;
+    }
+    if (onConfirm && typeof onCancle !== "function") {
+      return;
+    }
+    const confirmAction = () => {
+      if (window.confirm(message)) {
+        onConfirm();
+      } else {
+        onCancle();
+      }
+    };
+    return confirmAction;
+  };
+  const deleteConfirm = () => (window.location.href = `/`);
+  const cancleConfirm = () => console.log("취소");
+  const confirmDelete = useConfirm(
+    "삭제하시겠습니까?",
+    deleteConfirm,
+    cancleConfirm
+  );
+
   useEffect(() => {
     axios(`http://192.168.180.14:3000/movie/getDetail?id=${id}`)
       .then((res) => res.data)
@@ -82,6 +107,7 @@ function Detail() {
       .put("http://192.168.180.14:3000/movie/updateMovie", req, { headers })
       .then((res) => {
         alert("수정되었습니다", res);
+        window.location.href = `/`;
       })
       .catch(function (res) {
         alert("요청이 에러로 인해 취소 되었습니다");
@@ -117,6 +143,7 @@ function Detail() {
       .post("http://192.168.180.14:3000/movie/setMovie", req, { headers })
       .then((res) => {
         alert("저장되었습니다", res);
+        window.location.href = `/`;
       })
       .catch(function (res) {
         alert("요청이 에러로 인해 취소 되었습니다");
@@ -138,11 +165,17 @@ function Detail() {
         data: req,
       })
       .then(function (response) {
-        alert("수정되었습니다");
+        confirmDelete("삭제하시겠습니까?", deleteConfirm, cancleConfirm);
       })
       .catch(function (res) {
         alert("요청이 에러로 인해 취소 되었습니다");
       });
+  };
+
+  //input에 숫자, 특수기호.
+  const isNumber = (value) => {
+    const regExp = /[a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+    return regExp.test(value);
   };
 
   return (
@@ -157,7 +190,11 @@ function Detail() {
             <input
               id="title"
               className="Home"
-              style={{ paddingTop: "20px" }}
+              style={{
+                paddingTop: "20px",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+              }}
               data-text-context="true"
               align="left"
               value={title}
@@ -167,7 +204,6 @@ function Detail() {
               }}
               readOnly={false}
             ></input>
-            <button onClick={console.log("111")}>콘솔 확인</button>
             <Button
               id="test-id"
               hidden={id < 1 && hidden}
@@ -233,11 +269,18 @@ function Detail() {
                   <input
                     id="SecondCell"
                     value={year}
+                    maxLength="4" //글자 수 제한
                     onChange={(e) => {
-                      setYear(e.target.value);
+                      console.log(e.target.value);
+                      if (e.target.value && isNumber(e.target.value)) {
+                        e.preventDefault();
+                        return null;
+                      } else {
+                        setYear(e.target.value);
+                      }
                     }}
                   ></input>
-
+                  {/* setYear(e.target.value).onchange(); */}
                   {/* &nbsp;는 빈칸을 나타남 */}
                 </td>
                 <td className="SecondCell">
@@ -245,8 +288,14 @@ function Detail() {
                     id="SecondCell"
                     value={rating}
                     onChange={(e) => {
-                      setRating(e.target.value);
+                      if (e.target.value && isNumber(e.target.value)) {
+                        e.preventDefault();
+                        return null;
+                      } else {
+                        setRating(e.target.value);
+                      }
                     }}
+                    maxLength="3"
                   ></input>
                 </td>
                 <td className="SecondCell">
@@ -254,14 +303,23 @@ function Detail() {
                     id="SecondCell"
                     value={runtime}
                     onChange={(e) => {
-                      setRuntime(e.target.value);
+                      if (e.target.value && isNumber(e.target.value)) {
+                        e.preventDefault();
+                        return null;
+                      } else {
+                        setRuntime(e.target.value);
+                      }
                     }}
+                    maxLength="3"
                   ></input>
                 </td>
                 <td className="SecondCell">
                   <input
                     id="SecondCell"
                     value={genres}
+                    onClick={(e) => {
+                      console.log(e.target.value);
+                    }}
                     onChange={(e) => {
                       setGenres(e.target.value);
                     }}

@@ -111,3 +111,5 @@ Rquest Data
 Response Data
 
 - data [{"id":1,"movie_id":1,"rating_number":7,"view_number":36724,"reply_number":54,"date":"2022-01-01"}]
+
+http://192.168.180.14:3000/graph/getMovieGraph
