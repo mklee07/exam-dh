@@ -98,3 +98,16 @@ APP.JSON =
   alert("error");
   });
   console.log(`id: ${id}`);
+
+GET http://아이피:포트/graph/getCalendarGraph
+
+Rquest Data
+
+- 모든 Parameter는 필수 값
+  id : Integer
+  strDate : String ex) 2022-01-01
+  endDate : String ex) 2022-01-31
+
+Response Data
+
+- data [{"id":1,"movie_id":1,"rating_number":7,"view_number":36724,"reply_number":54,"date":"2022-01-01"}]
