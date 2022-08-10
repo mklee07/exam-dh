@@ -105,7 +105,7 @@ Rquest Data
 
 - 모든 Parameter는 필수 값
   id : Integer
-  strDate : String ex) 2022-01-01
+  strDate : String ex) 2022-01-01 YYYY-MM-dd
   endDate : String ex) 2022-01-31
 
 Response Data

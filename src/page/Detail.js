@@ -114,18 +114,6 @@ function Detail() {
       });
   };
 
-  // app.put("http://192.168.180.14:3000/movie/updateMovie", (req, res) => {
-  //   const { id, title } = req.body;
-  //   const movie = movie.map((movie) => {
-  //     if (movie.id == id) movie.title = title;
-  //     return {
-  //       id: movie.id,
-  //       title: movie.title,
-  //     };
-  //   });
-  //   res.json({ ok: true, movie: movie });
-  // });
-
   const Save = () => {
     const req = qs.stringify({
       title: title,

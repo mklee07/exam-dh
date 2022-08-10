@@ -27,8 +27,7 @@ ModuleRegistry.registerModules([
 ]);
 
 const Home = () => {
-  const gridRef = useRef(); // sizeToFit에 이용됨 , useRef는 .current를 통해 useRef에 저장된 값에 접근할 수 있음.
-  const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
+  const gridRef = useRef(); // useRef는 .current를 통해 저장된 값에 접근할 수 있음.
   const [rowData, setRowData] = useState();
   const [columnDefs] = useState([
     { field: "rating", resizable: true, chartDataType: "category" },
@@ -47,57 +46,6 @@ const Home = () => {
     { field: "genres", resizable: true },
     { field: "runtime", resizable: true, chartDataType: "series" },
   ]);
-  //GRAPH
-  const defaultColDef = useMemo(() => {
-    return {
-      editable: true,
-      sortable: true,
-      flex: 1,
-      minWidth: 100,
-      filter: true,
-      resizable: true,
-    };
-  }, []);
-  //GRAPH
-  const popupParent = useMemo(() => {
-    return document.body;
-  }, []);
-  const chartThemeOverrides = useMemo(() => {
-    return {
-      common: {
-        title: {
-          enabled: true,
-          text: "Medals by Age",
-        },
-        legend: {
-          position: "bottom",
-        },
-      },
-      column: {
-        axes: {
-          category: {
-            label: {
-              rotation: 0,
-            },
-          },
-        },
-      },
-    };
-  }, []);
-  //GRAPH
-  const onFirstDataRendered = useCallback((params) => {
-    var createRangeChartParams = {
-      cellRange: {
-        rowStartIndex: 0,
-        rowEndIndex: 79,
-        columns: ["age", "gold", "silver", "bronze"],
-      },
-      chartType: "groupedColumn",
-      chartContainer: document.querySelector("#myChart"),
-      aggFunc: "sum",
-    };
-    gridRef.current.api.createRangeChart(createRangeChartParams);
-  }, []);
 
   const onClickNewData = (e) => {
     window.location.href = "/" + "movie" + "/" + 0;
@@ -214,11 +162,6 @@ const Home = () => {
           enableCellTextSelection={true} //  사용시 아래의 ensureDomOrder을 같이 활용하는게 좋다고 본문에 설명이있음.
           ensureDomOrder={true} //본적으로 행과 열은 DOM에서 순서 없이 나타날 수 있고 '잘못된 순서'는 화면 판독기에서 구문 분석할 때 일관되지 않은 결과를 초래할 수 있음. 이를 방지하고자 행 및 열 순서를 강제 실행함.
           cacheQuickFilter={true}
-          //추가된 내용
-          defaultColDef={defaultColDef}
-          popupParent={popupParent}
-          chartThemeOverrides={chartThemeOverrides}
-          onFirstDataRendered={onFirstDataRendered}
         />
       </div>
       <div className="ag-theme-alpine my-chart"></div>
@@ -230,3 +173,6 @@ export default Home;
 
 //https://yts.mx/api/v2/movie_details.json?movie_id=37384
 //http://192.168.180.14:3000/movie/getMovies
+
+// http://192.168.180.14:3000/graph/getMovieGraph?id=1&strDate=2022-01-01&endDate=2022-01-31
+// http://192.168.180.14:3000/graph/getMovieGraph?id=3&strDate=undefined&endDate=Fri

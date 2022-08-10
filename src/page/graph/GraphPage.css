@@ -1,0 +1,42 @@
+/* <td>에 모두 사용되는 css */
+td {
+    padding-left: 15px;
+    padding-right: 15px;
+    border-color: white;
+    border-style: solid;
+    border-width: thin; 
+
+}
+
+/* className=FirstCell이면 모두 사용되는 css */
+.FirstCell{
+    height: 30px;
+    color: white;
+    background-color: #0090ff;
+    text-align: center;
+}
+.SecondCell{
+    height: 50px;
+    background-color: #f0f4f6;
+    text-align: center;
+    
+}
+#SecondCell{
+    text-align: center;
+    
+}
+
+.ThirdCell{
+    height: 30px;
+    color: white;
+    background-color: #0090ff;
+    text-align: center;
+}
+
+/* id = title이면 모두 사용되는 css */
+#title{
+    font-size: 40px;
+    font-weight: bold;
+}
+
+
